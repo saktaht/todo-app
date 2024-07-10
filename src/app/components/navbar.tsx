@@ -25,8 +25,8 @@ export const Navbar = (): JSX.Element => {
             <ul className='h-full grid grid-rows-4'>
               {data.map((item, index) => (
                 <li 
-                key={index} 
-                className='cursor-pointer hover:bg-yellow-200 grid place-items-center  border-t-4 '
+                  key={index} 
+                  className='cursor-pointer hover:bg-yellow-200 grid place-items-center  border-t-4 '
                 >
                     {item.icon}
                   <a href={item.link} className='text-lg'>
