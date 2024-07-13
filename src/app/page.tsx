@@ -10,9 +10,9 @@ export default function Home() {
       <div className="grid col-span-4 grid-center justify-center pt-8">
         <Input />
       </div>
-      <div className="pt-9">
+      {/* <div className="pt-9">
         <Button color="blue">追加</Button>
-      </div>
+      </div> */}
       {/* <Button color="green">編集</Button>
       <Button color="red">削除</Button> */}
     </div>
