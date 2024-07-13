@@ -26,7 +26,7 @@ export const Navbar = (): JSX.Element => {
               {data.map((item, index) => (
                 <li 
                   key={index} 
-                  className='cursor-pointer hover:bg-yellow-200 grid place-items-center  border-t-4 '
+                  className='cursor-pointer hover:bg-sky-300 grid place-items-center  border-t-4 '
                 >
                     {item.icon}
                   <a href={item.link} className='text-lg'>
