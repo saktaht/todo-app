@@ -17,14 +17,14 @@ const colorClasses: ColorClasses = {
 
 export const Button = ({ color, children, ...rest }: ButtonProps) => {
   return (
-    <div>
+    <>
       <button 
         type="button" 
-        className={`rounded-md text-white font-bold md:px-6 md:py-3 px-4 py-2  ${colorClasses[color]}`} 
+        className={`rounded-md text-white px-4 py-2  ${colorClasses[color]}`} 
         {...rest}
       >
         {children}
       </button>
-    </div>
+    </>
   );
 }
