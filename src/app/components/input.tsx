@@ -5,6 +5,7 @@ import { AddTaskProps } from '../types/add'
 import { FilterType } from '../types/add'
 import {v4 as uuidv4} from 'uuid'
 import { Button } from './button'
+import { todo } from 'node:test'
 
 export const Input = (): React.JSX.Element => {
   const [text, setText] = React.useState<string>('')
@@ -48,14 +49,18 @@ export const Input = (): React.JSX.Element => {
     setText('')
   }
 
-  const handleEdit = (id: string, value: string) => {
+  const handleTodo = <K extends keyof AddTaskProps>(
+    id: string,
+    key: K,
+    value: AddTaskProps[K]
+  ) => {
     setTodos((todos) => {
       const newTodos = todos.map((todo) => {
         if (todo.id === id) {
           //分割代入でvalueプロパティを追加
           return {
             ...todo,
-            value
+            [key]: value
           }
         }
         return todo
@@ -63,42 +68,14 @@ export const Input = (): React.JSX.Element => {
       return newTodos;
     })
   }
-
-  const handleCheck = (id: string, checked: boolean) => {
-    setTodos((todos) => {
-      const newTodos = todos.map((todo) => {
-        if (todo.id === id) {
-          //分割代入でvalueプロパティを追加
-          return {
-            ...todo,
-            checked
-          }
-        }
-        return todo
-      });
-      return newTodos;
-    })
-  }
-
-  const handleRemove = (id: string, remove: boolean) => {
-    setTodos((todos) => {
-      const newTodos = todos.map((todo) => {
-        if (todo.id === id) {
-          //分割代入でvalueプロパティを追加
-          return {
-            ...todo,
-            remove
-          };
-        }
-        return todo
-      });
-    return newTodos;
-  });
-  };
 
   const handleFilter = (filter: FilterType) => {
     setFilter(filter);
   }
+
+  const handleRemoveAll = () => {
+    setTodos((todos) => todos.filter((todo) => !todo.remove));
+  };
 
   return (
     <div className=''>
@@ -112,6 +89,17 @@ export const Input = (): React.JSX.Element => {
         <option value="unchecked">現在のタスク</option>
         <option value="removed">ごみ箱</option>
       </select>
+      {filter === 'removed' ? (
+        <button 
+          className='px-3 py-1 bg-rose-500 hover:bg-rose-600 text-white rounded-md ml-4 mb-4'  
+          onClick={handleRemoveAll}
+          disabled={todos.filter((todo) => todo.remove).length === 0}
+        >
+          ごみ箱を空にする
+        </button>
+        ) :
+        (undefined)
+      }
       <form 
         autoComplete="on"
         onSubmit={(e) => {
@@ -145,20 +133,19 @@ export const Input = (): React.JSX.Element => {
                 type="checkbox"
                 disabled={ todo.remove || filter === 'checked' || filter === 'removed' }
                 checked={todo.checked}
-                onChange={(e) => handleCheck(todo.id, !todo.checked)}
+                onChange={(e) => handleTodo(todo.id, 'checked', !todo.checked)}
               />
               <input 
                 type="text"
                 disabled={ todo.checked || todo.remove || filter === 'checked' || filter === 'removed' }
                 value={todo.value}
-                onChange={e => handleEdit(todo.id, e.target.value)}
+                onChange={e => handleTodo(todo.id, 'value', e.target.value)}
               />
               <button 
                 className='px-3 py-1 bg-rose-500 hover:bg-rose-600 text-white rounded-md ml-4'
-                onClick={() => handleRemove(todo.id, !todo.remove)}
+                onClick={() => handleTodo(todo.id, 'remove', !todo.remove)}
               >
                 {todo.remove ? '復元' : '削除'}
-                {/* 削除 */}
               </button>
             </li>
           );
