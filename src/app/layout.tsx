@@ -1,6 +1,15 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { types } from "util";
+import type { ReactNode } from 'react';
+
+//この型を書くとなぜかbuildできた
+type LayoutProps = {
+  children: ReactNode;
+  types: ReactNode;
+  params?: any;
+};
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,11 +20,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: LayoutProps)
+{
   return (
-    <html lang="en">
+    <html lang="ja">
       <body className={inter.className}>{children}</body>
     </html>
   );

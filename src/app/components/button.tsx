@@ -1,5 +1,5 @@
 import React, { Children } from 'react'
-import { ButtonProps } from '../types/button'
+import { ButtonProps } from '../@types/button'
 
 type ColorClasses = {
   [key in ButtonProps['color']]: string;

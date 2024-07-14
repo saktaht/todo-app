@@ -1,11 +1,14 @@
 'use client'
 
 import React from 'react'
-import { AddTaskProps } from '../types/add'
-import { FilterType } from '../types/add'
+import { useEffect, useState  } from 'react';
+import { AddTaskProps } from '../@types/add'
+import { FilterType } from '../@types/add'
 import {v4 as uuidv4} from 'uuid'
+import localforage from 'localforage'
 import { Button } from './button'
 import { todo } from 'node:test'
+import { isTodos } from '../lib/isTodo';
 
 export const Input = (): React.JSX.Element => {
   const [text, setText] = React.useState<string>('')
@@ -49,6 +52,8 @@ export const Input = (): React.JSX.Element => {
     setText('')
   }
 
+  // handleTodoを呼び出すには、id、key、valueの3つの引数が必要
+  //keyは分割代入で配列に入るもの || valueはtextを入れたり、checkedやremoveのtrue or falseを入れる
   const handleTodo = <K extends keyof AddTaskProps>(
     id: string,
     key: K,
@@ -69,6 +74,7 @@ export const Input = (): React.JSX.Element => {
     })
   }
 
+  //削除ボタンを押すと、removeプロパティがtrueになる
   const handleFilter = (filter: FilterType) => {
     setFilter(filter);
   }
@@ -77,8 +83,19 @@ export const Input = (): React.JSX.Element => {
     setTodos((todos) => todos.filter((todo) => !todo.remove));
   };
 
+  useEffect(() => {
+    localforage
+      .getItem<AddTaskProps[]>('todos')
+      .then((value) => isTodos(value) && setTodos(value || []))
+      .catch((err) => console.error('Error saving todos:', err));
+  }, []);
+
+  useEffect(() => {
+    localforage.setItem('todos', todos)
+  }, [todos]);
+
   return (
-    <div className=''>
+    <div className='md:mx-20'>
       {/* e.target.value: string を Filter型にアサーションする */}
       <select 
         defaultValue="all" 
@@ -91,7 +108,7 @@ export const Input = (): React.JSX.Element => {
       </select>
       {filter === 'removed' ? (
         <button 
-          className='px-3 py-1 bg-rose-500 hover:bg-rose-600 text-white rounded-md ml-4 mb-4'  
+          className='px-3 py-1 bg-rose-500 hover:bg-rose-400 text-white rounded-md ml-4 mb-4'  
           onClick={handleRemoveAll}
           disabled={todos.filter((todo) => todo.remove).length === 0}
         >
@@ -101,7 +118,7 @@ export const Input = (): React.JSX.Element => {
         (undefined)
       }
       <form 
-        autoComplete="on"
+        className='grid grid-cols-8 gap-1'
         onSubmit={(e) => {
           e.preventDefault();
           handleSubmit();
@@ -109,15 +126,15 @@ export const Input = (): React.JSX.Element => {
       >
         <input 
           type="text" 
-          size={70}
-          className="border-2 border-blue-500 rounded-md p-4" 
+          // size={70}
+          className="border-2 border-blue-500 rounded-md w-full girid col-span-6 px-4 py-2" 
           placeholder='ここにやることを書いてください'
           onChange={(e) => handleChange(e)}
         />
         <input
           type="submit"
           value="追加"
-          className="border-2 bg-blue-500 hover:bg-blue-600 rounded-md px-4 py-2 ml-4 text-white font-bold"
+          className="border-2 bg-blue-500 hover:bg-blue-600 rounded-md px-4 py-2 col-span-2 sm:col-span-1 text-white font-bold"
           onClick={handleSubmit}
         />
       </form>
