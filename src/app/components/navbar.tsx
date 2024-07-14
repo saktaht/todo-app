@@ -3,7 +3,7 @@ import { ReactElement } from 'react';
 import { GiAchievement } from "react-icons/gi";
 import { FaHome } from "react-icons/fa";
 import { CiTimer } from "react-icons/ci";
-import { NavItem } from '../types/navItem';
+import { NavItem } from '../@types/navItem';
 import { IconContext } from 'react-icons'
 
 export const Navbar = (): JSX.Element => {
