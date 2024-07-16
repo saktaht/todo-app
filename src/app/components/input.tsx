@@ -1,19 +1,20 @@
 'use client'
 
 import React from 'react'
-import { useEffect, useState  } from 'react';
+import { useEffect, useState } from 'react';
 import { AddTaskProps } from '../@types/add'
 import { FilterType } from '../@types/add'
 import {v4 as uuidv4} from 'uuid'
 import localforage from 'localforage'
-import { Button } from './button'
 import { todo } from 'node:test'
 import { isTodos } from '../lib/isTodo';
+import { OpenContext } from './openContext';
 
 export const Input = (): React.JSX.Element => {
   const [text, setText] = React.useState<string>('')
   const [todos, setTodos] = React.useState<AddTaskProps[]>([])
   const [filter, setFilter] = React.useState<FilterType>('all')
+  const { isOpen, handleOpen } = React.useContext(OpenContext);
 
   const filteredTodos = todos.filter((todo) => {
     switch (filter) {
@@ -97,15 +98,7 @@ export const Input = (): React.JSX.Element => {
   return (
     <div className='md:mx-20'>
       {/* e.target.value: string を Filter型にアサーションする */}
-      <select 
-        defaultValue="all" 
-        onChange={(e) => handleFilter(e.target.value as FilterType)}
-      >
-        <option value="all">すべてのタスク</option>
-        <option value="checked">完了したタスク</option>
-        <option value="unchecked">現在のタスク</option>
-        <option value="removed">ごみ箱</option>
-      </select>
+      
       {filter === 'removed' ? (
         <button 
           className='px-3 py-1 bg-rose-500 hover:bg-rose-400 text-white rounded-md ml-4 mb-4'  
@@ -117,57 +110,74 @@ export const Input = (): React.JSX.Element => {
         ) :
         (undefined)
       }
-      <form 
-        className='grid grid-cols-8 gap-1'
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-      >
-        <input 
-          type="text" 
-          // size={70}
-          className="border-2 border-blue-500 rounded-md w-full girid col-span-6 px-4 py-2" 
-          placeholder='ここにやることを書いてください'
-          onChange={(e) => handleChange(e)}
-        />
-        <input
-          type="submit"
-          value="追加"
-          className="border-2 bg-blue-500 hover:bg-blue-600 rounded-md px-4 py-2 col-span-2 sm:col-span-1 text-white font-bold"
-          onClick={handleSubmit}
-        />
-      </form>
-      <ul>
-        {filteredTodos.map((todo) => {
-          if (!todo) {
-            return;
-          }
-          return (
-            
-            <li key={todo.id} className='border-2 p-4'>
-              <input 
-                type="checkbox"
-                disabled={ todo.remove || filter === 'checked' || filter === 'removed' }
-                checked={todo.checked}
-                onChange={(e) => handleTodo(todo.id, 'checked', !todo.checked)}
-              />
-              <input 
-                type="text"
-                disabled={ todo.checked || todo.remove || filter === 'checked' || filter === 'removed' }
-                value={todo.value}
-                onChange={e => handleTodo(todo.id, 'value', e.target.value)}
-              />
-              <button 
-                className='px-3 py-1 bg-rose-500 hover:bg-rose-600 text-white rounded-md ml-4'
-                onClick={() => handleTodo(todo.id, 'remove', !todo.remove)}
-              >
-                {todo.remove ? '復元' : '削除'}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+      {!isOpen ? (
+        <div>
+          <select 
+            defaultValue="all" 
+            onChange={(e) => handleFilter(e.target.value as FilterType)}
+          >
+            <option value="all">すべてのタスク</option>
+            <option value="checked">完了したタスク</option>
+            <option value="unchecked">現在のタスク</option>
+            <option value="removed">ごみ箱</option>
+          </select>
+          <form 
+            className='grid grid-cols-8 gap-1'
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
+          <input 
+            type="text" 
+            // size={70}
+            className="border-2 border-blue-500 rounded-md w-full grid col-span-6 p-4" 
+            placeholder='ここにやることを書いてください'
+            onChange={(e) => handleChange(e)}
+          />
+          <input
+            type="submit"
+            value="追加"
+            className="border-2 bg-blue-500 hover:bg-blue-600 rounded-md px-4 py-2 col-span-2 md:col-span-1 text-white font-bold"
+            onClick={handleSubmit}
+          />
+        </form>
+        <ul>
+          {filteredTodos.map((todo) => {
+            if (!todo) {
+              return;
+            }
+            return (
+              
+              <li key={todo.id} className='border-t-2 p-4'>
+                <input 
+                  type="checkbox"
+                  disabled={ todo.remove || filter === 'checked' || filter === 'removed' }
+                  checked={todo.checked}
+                  onChange={(e) => handleTodo(todo.id, 'checked', !todo.checked)}
+                />
+                <input 
+                  type="text"
+                  disabled={ todo.checked || todo.remove || filter === 'checked' || filter === 'removed' }
+                  value={todo.value}
+                  onChange={e => handleTodo(todo.id, 'value', e.target.value)}
+                />
+                <button 
+                  className='px-3 py-1 bg-rose-500 hover:bg-rose-600 text-white rounded-md ml-4'
+                  onClick={() => handleTodo(todo.id, 'remove', !todo.remove)}
+                >
+                  {todo.remove ? '復元' : '削除'}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+        </div>
+        
+      ) : (
+        undefined
+      )}
+      
     </div>
   )
 }
