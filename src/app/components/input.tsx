@@ -14,7 +14,7 @@ export const Input = (): React.JSX.Element => {
   const [text, setText] = React.useState<string>('')
   const [todos, setTodos] = React.useState<AddTaskProps[]>([])
   const [filter, setFilter] = React.useState<FilterType>('all')
-  const { isOpen, handleOpen } = React.useContext(OpenContext);
+  const { isOpen } = React.useContext(OpenContext);
 
   const filteredTodos = todos.filter((todo) => {
     switch (filter) {
@@ -34,6 +34,7 @@ export const Input = (): React.JSX.Element => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
     setText(e.target.value)
+    // 
   }
 
   // React.FormEvent<HTMLFormElement>じゃダメだった
@@ -128,20 +129,22 @@ export const Input = (): React.JSX.Element => {
               handleSubmit();
             }}
           >
-          <input 
-            type="text" 
-            // size={70}
-            className="border-2 border-blue-500 rounded-md w-full grid col-span-6 p-4" 
-            placeholder='ここにやることを書いてください'
-            onChange={(e) => handleChange(e)}
-          />
-          <input
-            type="submit"
-            value="追加"
-            className="border-2 bg-blue-500 hover:bg-blue-600 rounded-md px-4 py-2 col-span-2 md:col-span-1 text-white font-bold"
-            onClick={handleSubmit}
-          />
-        </form>
+            <input 
+              type="text" 
+              // size={70}
+              className="border-2 border-blue-500 rounded-md w-full grid col-span-6 p-4" 
+              //ここをvalueを追加したら、入力した文字が消えた・ インプットフィールドの値が常にtextステートと同期してる
+              value={text}
+              placeholder='ここにやることを書いてください'
+              onChange={(e) => handleChange(e)}
+            />
+            <input
+              type="submit"
+              value="追加"
+              className="border-2 bg-blue-500 hover:bg-blue-600 rounded-md px-4 py-2 col-span-2 md:col-span-1 text-white font-bold"
+              onClick={handleSubmit}
+            />
+          </form>
         <ul>
           {filteredTodos.map((todo) => {
             if (!todo) {

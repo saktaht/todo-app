@@ -21,12 +21,13 @@ export const Navbar = (): JSX.Element => {
   const { isOpen, handleOpen } = React.useContext(OpenContext);
 
   return (
-    <>
+    <IconContext.Provider value={{ color: 'black', size: '40px' }}>
+      <>
       {/* <label htmlFor="menu" className="block absolute text-100 sm:hidden"> */}
       {!isOpen ? (
         <button 
           type='button' 
-          className='h-10 inline md:hidden  ml-2' 
+          className='h-10 inline md:hidden ml-2 pt-2' 
           onClick={handleOpen}
           >
           {/* メニューボタン */}
@@ -38,19 +39,19 @@ export const Navbar = (): JSX.Element => {
             {/* <label htmlFor="menu" className="block sm:hidden"> */}
             <button 
               type='button' 
-              className='h-10 inline md:hidden ml-2'
+              className='h-10 inline md:hidden ml-2 pt-2'
               onClick={handleOpen}
             >
             {/* 閉じるボタン */}
               <TfiClose />
             </button>      
             {/* </label> */}
-              <nav className='h-screen bg-blue-300'>
+              <nav className='h-screen'>
                 <ul className='h-full grid grid-rows-4 md:static absolute'>
                   {data.map((item, index) => (
                     <li 
                       key={index} 
-                      className='cursor-pointer hover:bg-sky-300 grid place-items-center border-t-4 '
+                      className='cursor-pointer  bg-blue-300 hover:bg-sky-300 grid place-items-center border-t-4 '
                     >
                         {item.icon}
                       <a href={item.link} className='text-lg'>
@@ -58,7 +59,7 @@ export const Navbar = (): JSX.Element => {
                       </a>
                     </li>
                   ))}
-                  <li className="border-t-4 text-center grid place-items-center">
+                  <li className=" bg-blue-300 border-t-4 text-center grid place-items-center">
                     2024 © All rights reserved.
                   </li>
                 </ul>         
@@ -87,11 +88,12 @@ export const Navbar = (): JSX.Element => {
                   ))}
                   <li className="border-t-4 text-center">
                     2024 © All rights reserved.
-                    ここはフッター
                   </li>
                 </ul>         
               </nav>
           </aside>
     </>
+    </IconContext.Provider>
+    
   )
 }
