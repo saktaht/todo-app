@@ -14,6 +14,7 @@ export const Input = (): React.JSX.Element => {
   const [text, setText] = React.useState<string>('')
   const [todos, setTodos] = React.useState<AddTaskProps[]>([])
   const [filter, setFilter] = React.useState<FilterType>('all')
+  const [hour, setHour] = React.useState<number>(0)
   const { isOpen } = React.useContext(OpenContext);
 
   const filteredTodos = todos.filter((todo) => {
@@ -48,10 +49,12 @@ export const Input = (): React.JSX.Element => {
       id: uuidv4(),
       checked: false,
       remove: false,
+      hour: hour,
     };
     setTodos((todos) => [newTodo, ...todos]);
     // フォームへの入力をクリアする
-    setText('')
+    setText('');
+    setHour(0);
   }
 
   // handleTodoを呼び出すには、id、key、valueの3つの引数が必要
@@ -85,6 +88,16 @@ export const Input = (): React.JSX.Element => {
     setTodos((todos) => todos.filter((todo) => !todo.remove));
   };
 
+  const handleHour = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setHour(Number(e.target.value));
+  };
+
+//mapと同じコールバック関数だから配列の要素の数だけこの行動を繰り返す
+// (初期値, 現在の値) => 初期値 + todo.hour | 初期値は最後に書いてある0
+  const totalHours = todos.reduce((accumulator, todo) => {
+    return accumulator + todo.hour;
+  }, 0);
+
   useEffect(() => {
     localforage
       .getItem<AddTaskProps[]>('todos')
@@ -97,9 +110,7 @@ export const Input = (): React.JSX.Element => {
   }, [todos]);
 
   return (
-    <div className='md:mx-20'>
-      {/* e.target.value: string を Filter型にアサーションする */}
-      
+    <div className='md:mx-10'>
       {filter === 'removed' ? (
         <button 
           className='px-3 py-1 bg-rose-500 hover:bg-rose-400 text-white rounded-md ml-4 mb-4'  
@@ -131,13 +142,38 @@ export const Input = (): React.JSX.Element => {
           >
             <input 
               type="text" 
-              // size={70}
-              className="border-2 border-blue-500 rounded-md w-full grid col-span-6 p-4" 
+              className="border-2 border-blue-500 rounded-md w-full grid col-span-5 md:col-span-6 p-4" 
               //ここをvalueを追加したら、入力した文字が消えた・ インプットフィールドの値が常にtextステートと同期してる
               value={text}
               placeholder='ここにやることを書いてください'
               onChange={(e) => handleChange(e)}
             />
+            <div className='col-span-1'>
+              <span>学習時間</span>
+              <select 
+                name="学習時間" 
+                className='border-2 border-blue-500 rounded-md w-full grid py-2'
+                onChange={(e) => handleHour(e)}
+                value={hour}
+              >
+                <option value="0" className='hover:bg-cyan-300'>0</option>
+                <option value="0.5" className='hover:bg-cyan-300'>0.5</option>
+                <option value="1" className='hover:bg-cyan-300'>1</option>
+                <option value="1.5" className='hover:bg-cyan-300'>1.5</option>
+                <option value="2" className='hover:bg-cyan-300'>2</option>
+                <option value="2.5" className='hover:bg-cyan-300'>2.5</option>
+                <option value="3" className='hover:bg-cyan-300'>3</option>
+                <option value="3.5" className='hover:bg-cyan-300'>3.5</option>
+                <option value="4" className='hover:bg-cyan-300'>4</option>
+                <option value="4.45" className='hover:bg-cyan-300'>4.45</option>
+                <option value="5" className='hover:bg-cyan-300'>5</option>
+                <option value="6" className='hover:bg-cyan-300'>6</option>
+                <option value="7" className='hover:bg-cyan-300'>7</option>
+                <option value="8" className='hover:bg-cyan-300'>8</option>
+                <option value="9" className='hover:bg-cyan-300'>9</option>
+                <option value="10">10</option>
+              </select>
+            </div>
             <input
               type="submit"
               value="追加"
@@ -145,14 +181,14 @@ export const Input = (): React.JSX.Element => {
               onClick={handleSubmit}
             />
           </form>
-        <ul>
+        <ul >
           {filteredTodos.map((todo) => {
             if (!todo) {
               return;
             }
             return (
               
-              <li key={todo.id} className='border-t-2 p-4'>
+              <li key={todo.id} className='mt-4'>
                 <input 
                   type="checkbox"
                   disabled={ todo.remove || filter === 'checked' || filter === 'removed' }
@@ -165,6 +201,11 @@ export const Input = (): React.JSX.Element => {
                   value={todo.value}
                   onChange={e => handleTodo(todo.id, 'value', e.target.value)}
                 />
+                <span
+                  className='pl-4 hover:text-yellow-500'
+                >
+                  {todo.hour}時間
+                </span>
                 <button 
                   className='px-3 py-1 bg-rose-500 hover:bg-rose-600 text-white rounded-md ml-4'
                   onClick={() => handleTodo(todo.id, 'remove', !todo.remove)}
@@ -173,14 +214,16 @@ export const Input = (): React.JSX.Element => {
                 </button>
               </li>
             );
-          })}
+            })}
         </ul>
-        </div>
-        
+      </div>
       ) : (
         undefined
       )}
-      
+    <h1>
+      合計学習時間: {totalHours}
+    </h1>
+
     </div>
   )
 }

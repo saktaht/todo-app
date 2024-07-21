@@ -6,6 +6,7 @@ declare type AddTaskProps = {
   readonly id: string;
   checked?: boolean;
   remove?: boolean;
+  hour: number;
 };
 
 declare type FilterType = 'all' | 'checked' | 'unchecked' | 'removed';
