@@ -21,7 +21,7 @@ export const Navbar = (): JSX.Element => {
   const { isOpen, handleOpen } = React.useContext(OpenContext);
 
   return (
-    <IconContext.Provider value={{ color: 'black', size: '40px' }}>
+    <IconContext.Provider value={{ color: 'black', size: '20px' }}>
       <>
       {/* <label htmlFor="menu" className="block absolute text-100 sm:hidden"> */}
       {!isOpen ? (
